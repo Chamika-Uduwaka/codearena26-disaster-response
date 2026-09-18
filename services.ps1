@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Manages CodeArena '26 Disaster Response platform services.
 .DESCRIPTION
@@ -27,17 +27,20 @@ param (
 )
 
 $ErrorActionPreference = 'Continue'
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $RootPath = $PSScriptRoot
 $PidFile = Join-Path $RootPath ".services.pid"
 
 function Get-PortProcessIds([int[]]$Ports) {
     $pids = @()
     foreach ($port in $Ports) {
-        $conns = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
+        $conns = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue
         if ($conns) {
             foreach ($c in $conns) {
                 if ($c.OwningProcess -and $c.OwningProcess -gt 4) {
-                    $pids += $c.OwningProcess
+                    if (Get-Process -Id $c.OwningProcess -ErrorAction SilentlyContinue) {
+                        $pids += $c.OwningProcess
+                    }
                 }
             }
         }

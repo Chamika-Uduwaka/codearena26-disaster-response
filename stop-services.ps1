@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Convenience script to stop all CodeArena '26 disaster response services.
 .EXAMPLE
